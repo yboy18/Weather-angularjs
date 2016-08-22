@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<header>
+        <% include /header %>
+</header>
+
+<script>
+    function CateChage(cid){
+        alert('2');
+        var htmlvalue = $('')
+    }
+</script>
+<head>
+    <title><%=title%></title>
+</head>
+<body>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <p class="lead">Home</p>
+                <div class="list-group">
+                    <a href="/registration" class="list-group-item">Registration</a>
+                    <a href="/login" class="list-group-item">Login</a>
+                    <a href="/weather" class="list-group-item">Weather</a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+
+                <div class="thumbnail">
+                    
+                    <h1><%= result %></h1>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /.container -->
+<footer>
+    <% include /footer %>
+</footer>
+</body>
+
+</html>
+
+        
+
+</div>
+</body>
+</html>
