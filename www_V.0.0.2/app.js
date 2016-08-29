@@ -4,7 +4,6 @@
  */
 
 var express = require('express');
-var session = require('express-session');
 //var routes = require('./routes');
 var users = require('./modules/user');
 var functions = require('./modules/function');
@@ -26,13 +25,6 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  // 假如你不想使用 redis 而想要使用 memcached 的话，代码改动也不会超过 5 行。
-  // 这些 store 都遵循着统一的接口，凡是实现了那些接口的库，都可以作为 session 的 store 使用，比如都需要实现 .get(keyString) 和 .set(keyString, value) 方法。
-  // 编写自己的 store 也很简单
-  store: new redisStore(),
-  secret: 'somesecrettoken'
-}));
 
 // development only
 if ('development' == app.get('env')) {
