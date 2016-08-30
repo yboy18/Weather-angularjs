@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<header>
+        <% include /header %>
+</header>
+
+<script>
+    function CateChage(cid){
+        alert('2');
+        var htmlvalue = $('');
+    }
+</script>
+<head>
+    <title><%=title%></title>
+    
+    <script src="javascripts/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    
+    
+    
+    
+    <script>
+        var app = angular.module('weather', []).controller('WeatherModule', function($scope, $http, $log) {
+        // Default values.
+        $('#city').val('Hong Kong');
+    
+        // Define a function to process form submission.
+        $scope.stringdate = function (ctime){
+          var tdate = new Date(ctime*1000);
+          return tdate.getFullYear() + '-' + (tdate.getMonth()+1) + '-' + tdate.getDate();
+        }
+        $scope.search = function() {
+          // Fetch the data from the public API through JSONP.
+          var url = 'https://w-api.herokuapp.com/';
+          $scope.city = $('#city').val();
+          $http.jsonp(url, {
+            params: {
+              v: $scope.city,
+              callback: 'JSON_CALLBACK'
+            }
+          }).
+          success(function(data, status, headers, config) {
+            $scope.weathers = data.list;
+            
+            
+            $('.list-group').append('<a href="javascripts:void(0);" class="list-group-item" onClick="$(\'#city\').val(\''+$scope.city+'\');search();">'+$scope.city+'</a>');
+            
+            var chart = AmCharts.makeChart("chartdiv", {
+            "theme": "light",    "type": "serial",
+            "dataProvider": [{
+                "date": $scope.stringdate(data.list[0].dt),
+                "Temp": data.list[0].temp.day,
+                "Rain": data.list[0].rain,
+                "Speed": data.list[0].speed
+            }, {
+                "date": $scope.stringdate(data.list[1].dt),
+                "Temp": data.list[1].temp.day,
+                "Rain": data.list[1].rain,
+                "Speed": data.list[1].speed
+            }, {
+                "date": $scope.stringdate(data.list[2].dt),
+                "Temp": data.list[2].temp.day,
+                "Rain": data.list[2].rain,
+                "Speed": data.list[2].speed
+            }, {
+                "date": $scope.stringdate(data.list[3].dt),
+                "Temp": data.list[3].temp.day,
+                "Rain": data.list[3].rain,
+                "Speed": data.list[3].speed
+            }, {
+                "date": $scope.stringdate(data.list[4].dt),
+                "Temp": data.list[4].temp.day,
+                "Rain": data.list[4].rain,
+                "Speed": data.list[4].speed
+            }],
+            "valueAxes": [{
+                "stackType": "3d",
+                "unit": "",
+                "position": "left",
+                "title": $scope.city,
+            }],
+            "startDuration": 1,
+            "graphs": [ {
+                "balloonText":  $scope.city+" in [[category]] (Wind Speed): <b>[[value]]</b>",
+                "fillAlphas": 0.9,
+                "lineAlpha": 0.2,
+                "title": "Wind Speed",
+                "type": "column",
+                "valueField": "Speed"
+            },{
+                "balloonText": $scope.city+" in [[category]] (Rain): <b>[[value]]</b>",
+                "fillAlphas": 0.9,
+                "lineAlpha": 0.2,
+                "title": "Rain",
+                "type": "column",
+                "valueField": "Rain"
+            },{
+                "balloonText": $scope.city+" in [[category]] (Temperature): <b>[[value]]</b>",
+                "fillAlphas": 0.9,
+                "lineAlpha": 0.2,
+                "title": "Temp",
+                "type": "column",
+                "valueField": "Temp"
+            }],
+            "plotAreaFillAlphas": 0.1,
+            "depth3D": 60,
+            "angle": 30,
+            "categoryField": "date",
+            "categoryAxis": {
+                "gridPosition": "start"
+            },
+            "export": {
+            	"enabled": true
+             }
+        });
+            
+          }).
+          error(function(data, status, headers, config) {
+            // Log an error in the browser's console.
+            $log.error('Could not retrieve data from ' + url);
+          });
+          
+          
+    jQuery('.chart-input').off().on('input change',function() {
+    	var property	= jQuery(this).data('property');
+    	var target		= chart;
+    	chart.startDuration = 0;
+    
+    	if ( property == 'topRadius') {
+    		target = chart.graphs[0];
+          	if ( this.value == 0 ) {
+              this.value = undefined;
+          	}
+    	}
+    
+    	target[property] = this.value;
+    	chart.validateNow();
+    });
+          
+          
+        };
+    
+        // Trigger form submission for first load.
+        $scope.search();
+        
+      });
+      
+      
+  </script>
+    
+    
+    <style>	
+    .maintable{
+        width:600px;
+    }
+    .maintable th {
+         text-align:center;
+         background-color: #ec9;
+    }
+    .maintable th td{
+        vertical-align: top;
+    }
+    .subtable{
+        width:100%;
+    }
+    .subtable th{
+        text-align: right;
+         background-color: #fff;
+    }
+    .subtable td{
+        text-align: center;
+    }
+    .subtable th td{
+        vertical-align: top;
+    }
+    .title{
+        text-align: center;
+    }
+    #chartdiv {
+      width: 800px;
+      height: 300px;
+    }	
+    </style>
+</head>
+<body ng-app="weather">
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div ng-controller="WeatherModule">
+        <div class="row">
+            <div class="col-md-3">
+                <p class="lead">Home</p>
+                <div style='margin-bottom:10px;'>
+                <input type="text" id='city' ng-model="city" /> <button ng-click="search()" class="btn btn-success">Search</button>
+                
+                </div>
+                <div class="list-group">
+                </div>
+            </div>
+
+            <div class="col-md-9">
+
+                <div class="thumbnail">
+                    <div class="caption-full">
+                        
+                    </div>
+                    <div id="chartdiv"></div>
+                    
+                     <div data-ng-repeat='dayweather in weathers'>
+                         
+                        <h2></b>Date: {{ stringdate(dayweather.dt) }}</h2><br>
+                         
+                         <table class='maintable'>
+                             <tr>
+                                 <th>Weather</th>
+                                 <th>Temperature</th>
+                                 <th>Other information</th>
+                             </tr>
+                             <tr>
+                                 <td>
+                                     <table class='subtable'>
+                                         <tr>
+                                             <th>icon :</th>
+                                             <td><img style='width:50px;' src='http://openweathermap.org/img/w/{{ dayweather.weather[0].icon }}.png' /></td>
+                                         </tr>
+                                         <tr>
+                                             <th>Description :</th>
+                                             <td>{{ dayweather.weather[0].description }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>Main :</th>
+                                             <td>{{ dayweather.weather[0].main }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>Id :</th>
+                                             <td>{{ dayweather.weather[0].id }}</td>
+                                         </tr>
+                                     </table>
+                                 </td>
+                                 <td>
+                                     <table class='subtable'>
+                                         <tr>
+                                             <th>Morning :</th>
+                                             <td>{{ dayweather.temp.morn }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>eve :</th>
+                                             <td>{{ dayweather.temp.eve }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>night :</th>
+                                             <td>{{ dayweather.temp.night }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>max :</th>
+                                             <td>{{ dayweather.temp.max }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>min :</th>
+                                             <td>{{ dayweather.temp.min }}</td>
+                                         </tr>
+                                         <tr>
+                                             <th>Day :</th>
+                                             <td>{{ dayweather.temp.day }}</td>
+                                         </tr>
+                                         
+                                     </table>
+                                 </td>
+                                 <td>
+                                     <table class='subtable'>
+                                         <tr>
+                                             <th>rain :</th>
+                                             <td>{{ dayweather.rain }}</td>
+                                        </tr>
+                                         <tr>
+                                             <th>clouds :</th>
+                                             <td>{{ dayweather.clouds }}</td>
+                                        </tr>
+                                         <tr>
+                                             <th>deg :</th>
+                                             <td>{{ dayweather.deg }}</td>
+                                        </tr>
+                                         <tr>
+                                             <th>speed :</th>
+                                             <td>{{ dayweather.speed }}</td>
+                                        </tr>
+                                         <tr>
+                                             <th>humidity :</th>
+                                             <td>{{ dayweather.humidity }}</td>
+                                        </tr>
+                                         <tr>
+                                             <th>pressure :</th>
+                                             <td>{{ dayweather.pressure }}</td>
+                                        </tr>
+                                    </table>
+                                 </td>
+                             </tr>
+                             
+                         </table>
+                         
+                        <hr>
+  
+</div>
+                    
+                </div>
+
+
+            </div>
+
+        </div></div>
+
+    </div>
+    <!-- /.container -->
+<footer>
+    <% include /footer %>
+</footer>
+</body>
+
+</html>
